@@ -1,4 +1,19 @@
-# Smith Framework Skill - SPM Tool Dependencies
+# Smith Framework Skill
+
+Modern Swift development discipline with beautiful build monitoring, TCA patterns, and progressive disclosure for Claude Code.
+
+## 🚀 Claude Skill Integration
+
+This repository is a **Claude Skill** that provides intelligent guidance for Swift development. See [README-SKILL.md](./README-SKILL.md) for complete usage instructions.
+
+### Quick Start with Claude Code
+```bash
+# Install the skill
+claude skill add /path/to/smith-skill
+
+# Use it in Claude
+"Use Smith skill for my iOS app with TCA and build monitoring"
+```
 
 ## External Dependencies
 

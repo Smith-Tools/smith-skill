@@ -504,6 +504,182 @@ Consolidation:
 
 ---
 
+## Tree 5: Build Monitoring Strategy
+
+**Use this when you need to monitor builds, detect hangs, or optimize build performance.**
+
+**Problem:** Builds taking 30+ minutes with no insight, hung builds, or unknown bottlenecks.
+
+```
+What type of project is this?
+├─ Swift Package (Package.swift) → smith-sbsift
+│   ├─ Need real-time monitoring?
+│   │   ├─ YES → smith-sbsift monitor --monitor --eta
+│   │   └─ NO → swift build | smith-sbsift parse
+│   └─ Hung build?
+│       ├─ YES → smith-sbsift monitor --hang-detection
+│       └─ NO → smith-sbsift analyze
+│
+└─ Xcode Project (.xcodeproj/.xcworkspace) → smith-xcsift
+    ├─ Need real-time progress tracking?
+    │   ├─ YES → smith-xcsift monitor --workspace MyApp.xcworkspace --scheme MyApp --eta
+    │   └─ NO → xcodebuild | smith-xcsift parse
+    └─ Build hanging or slow?
+        ├─ YES → smith-xcsift monitor --workspace MyApp.xcworkspace --scheme MyApp --hang-detection --timeout 300
+        └─ NO → smith-xcsift analyze --workspace MyApp.xcworkspace --scheme MyApp
+```
+
+**Quick Commands:**
+```bash
+# Swift Package - Real-time monitoring
+smith-sbsift monitor --monitor --eta
+
+# Swift Package - Hang detection
+smith-sbsift monitor --hang-detection
+
+# Swift Package - Analysis
+smith-sbsift analyze
+
+# Xcode - Real-time monitoring with progress bar
+smith-xcsift monitor --workspace MyApp.xcworkspace --scheme MyApp --eta
+
+# Xcode - Resource monitoring
+smith-xcsift monitor --workspace MyApp.xcworkspace --scheme MyApp --resources
+
+# Xcode - Hang detection (30+ minute builds)
+smith-xcsift monitor --workspace MyApp.xcworkspace --scheme MyApp --hang-detection --timeout 600
+```
+
+**Expected Output Examples:**
+
+**Real-time monitoring:**
+```
+🔨 [████████░░░░░░░] 60% - CoreFramework - Linking (12/20) - ETA: 8m - CPU: 75% MEM: 4.2GB - Files: 234/380
+```
+
+**Hang detection:**
+```
+🚨 BUILD HANG DETECTED!
+📍 Suspected Phase: Package Resolution
+📄 Suspected File: Package.swift
+⏱️  Time Elapsed: 312.5s
+
+💡 RECOVERY RECOMMENDATIONS:
+   • Package resolution hang detected
+   • Try: swift package reset
+   • Or: rm -rf .build && swift package resolve
+```
+
+---
+
+## Tree 6: Progressive Build Optimization
+
+**Use this when builds are slow but not hanging. Apply optimizations incrementally.**
+
+```
+Is the build taking > 10 minutes?
+├─ NO → Standard monitoring (Tree 5)
+│
+└─ YES → Apply optimizations in order:
+
+    1. Enable real-time monitoring first
+    ├─ Xcode: smith-xcsift monitor --workspace ... --eta --resources
+    └─ Swift: smith-sbsift monitor --monitor --eta
+    ↓
+    2. After initial run, analyze bottlenecks
+    ├─ Xcode: smith-xcsift analyze --workspace ... --verbose
+    └─ Swift: smith-sbsift analyze
+    ↓
+    3. Apply easy wins first
+    ├─ smith-xcsift rebuild --preserve-dependencies --parallel
+    ├─ Clean DerivedData if > 2GB
+    └─ Enable incremental compilation
+    ↓
+    4. Still slow? Advanced optimization
+    ├─ smith-xcsift optimize --workspace ... --auto-apply
+    └─ Review target structure for splitting
+```
+
+**Optimization Tiers:**
+
+**Tier 1 - Quick Wins (5 min setup):**
+```bash
+# Enable monitoring
+smith-xcsift monitor --workspace MyApp.xcworkspace --scheme MyApp --eta
+
+# Clean rebuild with optimizations
+smith-xcsift rebuild --preserve-dependencies --parallel
+```
+
+**Tier 2 - Standard (15 min setup):**
+```bash
+# Full analysis
+smith-xcsift analyze --workspace MyApp.xcworkspace --scheme MyApp --verbose
+
+# Apply safe optimizations automatically
+smith-xcsift optimize --workspace MyApp.xcworkspace --scheme MyApp --auto-apply
+```
+
+**Tier 3 - Advanced (1+ hour):**
+```bash
+# Generate detailed profile
+smith-xcsift profile --workspace MyApp.xcworkspace --scheme MyApp --format json --memory
+
+# Manual target restructuring based on analysis
+```
+
+---
+
+## Tree 7: Emergency Build Recovery
+
+**Use this when builds are completely stuck or failing.**
+
+```
+Is the build process responsive?
+├─ YES → Normal monitoring (Tree 5)
+│
+└─ NO → Emergency recovery sequence:
+
+    1. Quick diagnostics (30 seconds)
+    ├─ Process check: ps aux | grep xcodebuild
+    ├─ Memory check: top | head -5
+    └─ Disk space: df -h
+    ↓
+    2. Force stop hanging processes
+    ├─ killall xcodebuild
+    ├─ killall swiftc
+    └─ killall clang
+    ↓
+    3. Clean build state
+    ├─ rm -rf ~/Library/Developer/Xcode/DerivedData
+    ├─ swift package reset (if SPM)
+    └─ xcodebuild clean (if Xcode)
+    ↓
+    4. Start with enhanced monitoring
+    ├─ smith-xcsift monitor --workspace MyApp.xcworkspace --scheme MyApp --hang-detection
+    └─ OR smith-sbsift monitor --hang-detection (if SPM)
+    ↓
+    5. Monitor first 5 minutes closely
+    ├─ Watch for immediate hang patterns
+    ├─ Check resource usage trends
+    └─ Abort if same pattern emerges → Go to deeper analysis
+```
+
+**Emergency Scripts:**
+```bash
+# Quick kill and clean
+killall xcodebuild && killall swiftc
+rm -rf ~/Library/Developer/Xcode/DerivedData
+
+# Monitor with aggressive hang detection
+smith-xcsift monitor --workspace MyApp.xcworkspace --scheme MyApp --hang-detection --timeout 120 --verbose
+
+# If still hanging after 2 minutes
+smith-xcsift analyze --workspace MyApp.xcworkspace --scheme MyApp --diagnose
+```
+
+---
+
 ## Quick Reference Card
 
 Print this or bookmark it:
@@ -525,7 +701,31 @@ Q4: Where should logic live?
 → SwiftUI views? → UI module
 → Domain logic? → Core module
 → Platform-specific? → Platform module
+
+Q5: Build monitoring strategy?
+→ Package.swift → smith-sbsift monitor
+→ Xcode project → smith-xcsift monitor
+→ Build hanging? → Add --hang-detection
+→ Need progress bar? → Add --eta
+
+Q6: Build optimization tier?
+→ 10+ minutes? → Enable monitoring first
+→ Still slow? → Apply optimizations progressively
+→ 30+ minutes? → Emergency recovery
 ```
+
+---
+
+## Smith Tools Integration Matrix
+
+| Situation | Primary Tool | Command Example | When to Use |
+|----------|--------------|----------------|------------|
+| **Basic monitoring** | smith-xcsift / smith-sbsift | `monitor --eta` | Need basic progress |
+| **Real-time progress** | smith-xcsift / smith-sbsift | `monitor --monitor --eta` | Watch long builds |
+| **Hang detection** | smith-xcsift / smith-sbsift | `monitor --hang-detection` | 30+ minute builds |
+| **Resource monitoring** | smith-xcsift | `monitor --resources` | Memory/CPU issues |
+| **Progressive optimization** | smith-xcsift | Tree 6 decision tree | Slow but working builds |
+| **Emergency recovery** | smith-xcsift / shell | Tree 7 decision tree | Stuck/failing builds |
 
 ---
 

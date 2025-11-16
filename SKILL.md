@@ -33,6 +33,8 @@ A modern Swift development discipline that prevents over-engineering and ensures
 | **smith-core** | "Swift", "dependency", "testing", "concurrency", "access control" | Universal Swift patterns |
 | **smith-tca** | "TCA", "@Reducer", "@ObservableState", "ComposableArchitecture" | Swift Composable Architecture |
 | **smith-platforms** | "iOS", "macOS", "visionOS", "RealityKit", "UIKit", "AppKit" | Platform-specific patterns |
+| **smith-xcsift** | "Xcode", "xcodebuild", "workspace", "scheme", "build monitoring" | Xcode build analysis and monitoring |
+| **smith-sbsift** | "Swift Package", "swift build", "SPM", "package monitoring" | Swift Package Manager build analysis |
 
 ## Usage Triggers
 
@@ -55,16 +57,22 @@ A modern Swift development discipline that prevents over-engineering and ensures
 - ✅ User mentions **iOS**, **macOS**, or platform-specific APIs
 - ✅ User asks about **UIKit**, **AppKit**, or platform frameworks
 
-**Use smith-build-tools when:**
-- ✅ User reports **build hangs**, "stuck building", "compilation timeout"
-- ✅ User mentions **Xcode hanging**, "build won't finish", "Swift compiler stuck"
-- ✅ User needs **build optimization** or **dependency analysis**
+**Use smith-xcsift when:**
+- ✅ User reports **Xcode build hangs**, "xcodebuild stuck", "build timeout"
+- ✅ User mentions **workspace builds**, "scheme compilation", "iOS build monitoring"
+- ✅ User needs **Xcode project analysis** or **build progress tracking**
+
+**Use smith-sbsift when:**
+- ✅ User reports **Swift Package build issues**, "swift build hanging", "SPM compilation"
+- ✅ User mentions **package dependencies**, "Swift build monitoring", "SPM analysis"
+- ✅ User needs **Swift Package Manager** build optimization or progress tracking
 
 **Examples:**
 - "How do I add dependency injection to my Swift code?" → smith-core
 - "My TCA reducer won't compile, what's wrong?" → smith-tca
 - "How do I create RealityKit entities for visionOS?" → smith-platforms
-- "My app build is hanging, can you help debug?" → smith-build-tools
+- "My app build is hanging, can you help debug?" → **Detect project type, route to smith-xcsift or smith-sbsift**
+- "My build is stuck, what should I do?" → **Detect project type, route to appropriate tool with --eta --resources --hang-detection**
 - "Use Smith for my entire TCA app with visionOS" → smith-core + smith-tca + smith-platforms
 
 ## What This Skill Does
@@ -128,6 +136,27 @@ swiftc -typecheck Sources/**/*.swift
 - Tree 1: When to extract child features
 - Tree 2: @DependencyClient vs Singleton
 - Tree 3: Navigation patterns for different use cases
+- Tree 5: Build Monitoring Strategy (progressive disclosure)
+- Tree 6: Progressive Build Optimization (quick wins → advanced)
+- Tree 7: Emergency Build Recovery (hang detection and resolution)
+
+### Build Monitoring Patterns
+**Beautiful Progress Bars Across All Tools:**
+```
+🔨 [████████░░░░░░░░] 60% - TargetName - Compilation (12/20) - ETA: 8m
+📈 CPU: 45% | Memory: 2.1GB | Files: 156/234
+```
+
+**Progressive Monitoring Strategy:**
+1. **Quick Wins:** `smith-[tool] monitor --eta` (basic progress + ETA)
+2. **Standard:** `smith-[tool] monitor --eta --resources` (progress + system monitoring)
+3. **Advanced:** `smith-[tool] monitor --eta --resources --hang-detection` (full monitoring)
+
+**Dynamic Tool Selection:**
+- **Auto-detect project type** (Xcode workspace vs Swift Package)
+- **Route to smith-xcsift** for Xcode projects (workspaces, schemes, iOS/macOS builds)
+- **Route to smith-sbsift** for Swift Packages (SPM dependencies, package builds)
+- **General build requests** automatically get routed to the appropriate tool
 
 ## Case Studies Available
 

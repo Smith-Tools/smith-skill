@@ -1,6 +1,6 @@
 name: smith
 title: Smith Framework
-description: Swift Composable Architecture patterns and modern iOS development framework. Prevents over-engineering with syntax-first validation, reading budgets, and Point-Free validated TCA patterns.
+description: Smith Framework - Modern Swift development discipline with beautiful build monitoring, TCA patterns, and progressive disclosure. Features unified progress tracking across Xcode and Swift Package Manager builds with anti-pattern detection.
 version: 1.1.1
 author: Smith Framework Team
 
@@ -34,6 +34,17 @@ triggers:
   - "action not received"
   - "TCA error"
   - "child features"
+
+  # Build monitoring indicators
+  - "build hanging"
+  - "xcodebuild stuck"
+  - "swift build hanging"
+  - "build timeout"
+  - "build progress"
+  - "compilation stuck"
+  - "Smith xcsift"
+  - "Smith sbsift"
+  - "build monitoring"
 
   # File patterns
   - "*Feature.swift"
