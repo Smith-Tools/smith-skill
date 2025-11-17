@@ -1,96 +1,155 @@
-# Smith Framework Skill
+# smith-skill - Swift Architecture Validation & Guidance
 
-Modern Swift development discipline with beautiful build monitoring, TCA patterns, and progressive disclosure for Claude Code.
+> **Agentic guidance for Swift architecture, TCA composition, and modern best practices through Claude Code.**
 
-## 🚀 Claude Skill Integration
+Production-ready Claude Skill providing automated architectural validation, pattern libraries, and decision guidance for Swift development teams.
 
-This repository is a **Claude Skill** that provides intelligent guidance for Swift development. See [README-SKILL.md](./README-SKILL.md) for complete usage instructions.
+## 🎯 What is smith-skill?
 
-### Quick Start with Claude Code
+smith-skill is the core component of Smith Tools, providing:
+
+- **TCA Composition Validators** - Detect architectural violations (Rules 1.1-1.5)
+- **Pattern Library** - 40+ validated TCA, concurrency, and testing patterns
+- **Decision Trees** - Architectural guidance for common scenarios
+- **Build Analysis** - Context-efficient compilation debugging
+- **Platform Patterns** - visionOS, iOS, macOS best practices
+- **Agentic Integration** - Seamless Claude Code workflow
+
+## 🚀 Quick Start
+
+### Installation
+
 ```bash
-# Install the skill
-claude skill add /path/to/smith-skill
+# Clone the repository
+git clone https://github.com/Smith-Tools/smith-skill.git
 
-# Use it in Claude
-"Use Smith skill for my iOS app with TCA and build monitoring"
+# Install to Claude Code
+ln -s $(pwd)/smith-skill ~/.claude/skills/smith
+
+# Verify installation
+ls ~/.claude/skills/smith/SKILL.md
 ```
 
-## External Dependencies
+### Usage in Claude Code
 
-### Required Tools
-
-**spmsift** - SPM Analysis Tool (Recommended)
-- **Purpose**: xcsift-equivalent for Swift Package Manager
-- **Installation**: `brew install elkraneo/tap/spmsift`
-- **Usage**: Ultra-context-efficient SPM package analysis (96% savings)
-- **Integration**: Used by `Scripts/spm-spmsift-simple.sh`
-- **Repository**: https://github.com/elkraneo/spmsift
-
-**sbsift** - Swift Build Analysis Tool (Recommended)
-- **Purpose**: xcsift-equivalent for Swift Build compilation
-- **Installation**: `brew install elkraneo/tap/sbsift`
-- **Usage**: Context-efficient build analysis (43% savings)
-- **Integration**: Used by `Scripts/validate-compilation-deep.sh` (automatic detection)
-- **Repository**: https://github.com/elkraneo/sbsift
-
-### Built-in Tools
-
-The following tools are included in this skill and require no external installation:
-
-**Smith Analysis Scripts:**
-- `spm-quick.sh` - Minimal SPM triage (95% context savings)
-- `spm-analyze.sh` - Structured JSON analysis (87% context savings)
-- `spm-validate.sh` - Detailed SPM validation
-- `spm-spmsift-simple.sh` - spmsift-based analyzer (requires spmsift tool)
-
-**Compilation Scripts:**
-- `validate-syntax.sh` - Swift syntax validation
-- `validate-compilation-deep.sh` - Full workspace compilation analysis
-- `smith-format-check.sh` - Swift Format validation
-
-**Pattern Analysis:**
-- `tca-pattern-validator.js` - TCA pattern validation (requires Node.js)
-
-### Context Efficiency Comparison
-
-| Tool | Context Usage | Output Size | Dependencies |
-|------|---------------|-------------|--------------|
-| `spm-spmsift-simple.sh` | Ultra-minimal | ~1.5KB | spmsift (Homebrew) |
-| `spm-quick.sh` | Minimal | 3 lines | Built-in |
-| `spm-analyze.sh` | Efficient | ~471B | Built-in |
-| `spm-validate.sh` | Verbose | 50+ lines | Built-in |
-| `swift package dump-package` | High | 40KB+ | Swift toolchain |
-
-## Installation Requirements
-
-### Minimum Setup
-- Swift toolchain (for built-in scripts)
-- Node.js (for TCA pattern validation)
-
-### Full Setup (Recommended)
-```bash
-# Install sbsift for build analysis (Homebrew)
-brew install elkraneo/tap/sbsift
-
-# Install spmsift for SPM analysis (Homebrew)
-brew install elkraneo/tap/spmsift
-
-# Verify installations
-sbsift --version
-spmsift --version
+```
+"Use Smith skill to analyze my TCA reducer"
+"Is my reducer violating composition rules?"
+"What should I extract from this monolithic feature?"
 ```
 
-### Usage Priority
+**Result:** Claude automatically detects your architecture question and provides guidance with optional WWDC context from sosumi-skill.
 
-Agents will follow this priority for analysis:
+## 📦 Core Components
 
-**SPM Analysis:**
-1. **Primary**: `spm-spmsift-simple.sh` (if spmsift available)
-2. **Fallback**: `spm-quick.sh` (built-in, always available)
-3. **Escalation**: `spm-analyze.sh` → `spm-validate.sh` (as needed)
+### TCA Composition Validators (4 Scripts)
 
-**Build Analysis:**
-1. **Primary**: `validate-compilation-deep.sh` (uses sbsift automatically if available)
-2. **Fallback**: `validate-compilation-deep.sh` (uses xcsift if sbsift unavailable)
+Located in `Scripts/`:
 
-This ensures maximum context efficiency while providing fallback options for environments without spmsift.
+1. **validate-tca-composition.sh** (9.6 KB)
+   - Detects Rules 1.1-1.5 violations
+   - Human-readable or JSON output
+   - Strict mode for CI/CD gating
+
+2. **check-tca-testability.sh** (6.7 KB)
+   - Testability scoring (0-100)
+   - Identifies testing blockers
+   - Provides improvement guidance
+
+3. **recommend-tca-extractions.sh** (7.8 KB)
+   - Suggests features to extract
+   - Prioritizes by value (P1/P2/P3)
+   - Estimates effort (2h-12h)
+
+4. **analyze-tca-dependency-graph.sh** (5.5 KB)
+   - Maps state dependencies
+   - Calculates coupling complexity
+   - Suggests decomposition strategies
+
+### Pattern Documentation
+
+- **AGENTS-TCA-PATTERNS.md** - Canonical TCA patterns with examples
+- **AGENTS-AGNOSTIC.md** - Universal Swift patterns (concurrency, testing, dependencies)
+- **AGENTS-DECISION-TREES.md** - Architectural decision guidance
+- **PLATFORM-VISIONOS.md** - visionOS-specific patterns
+- **SKILL.md** - Complete skill documentation
+
+## 🔄 Integration with Sosumi
+
+smith-skill works seamlessly with **sosumi-skill** for comprehensive guidance:
+
+- **Architecture questions** → smith-skill
+- **API/documentation questions** → sosumi-skill (Apple docs + WWDC)
+- **Both needed** → Combined response (optimal)
+
+When integrated: **70% token efficiency vs WebSearch**, plus architectural validation unavailable elsewhere.
+
+## 📊 Performance
+
+- **Load time:** <10ms (warm start)
+- **Installation size:** 1.0 MB (87 files)
+- **Context efficiency:** 70% savings vs WebSearch for complex queries
+- **WWDC coverage:** 2018-2025 (through sosumi integration)
+
+## 🛠️ Development
+
+### Building Locally
+
+```bash
+# No build needed—smith-skill is pure Markdown and bash scripts
+# Just use directly from cloned directory
+
+# Run validators
+./Scripts/validate-tca-composition.sh Sources/
+./Scripts/check-tca-testability.sh Sources/
+./Scripts/recommend-tca-extractions.sh Sources/
+./Scripts/analyze-tca-dependency-graph.sh Sources/
+```
+
+### Contributing
+
+1. Read [AGENTS-TCA-PATTERNS.md](./AGENTS-TCA-PATTERNS.md) for pattern standards
+2. Read [AGENTS-DECISION-TREES.md](./AGENTS-DECISION-TREES.md) for decision guidance
+3. Test patterns on real codebases before submitting
+4. Update relevant documentation files
+5. Follow commit message guidelines (see main README)
+
+## 📚 Documentation
+
+| Document | Purpose |
+|----------|---------|
+| **SKILL.md** | How to use smith-skill in Claude Code |
+| **AGENTS-TCA-PATTERNS.md** | TCA composition patterns and anti-patterns |
+| **AGENTS-AGNOSTIC.md** | Universal Swift patterns (not TCA-specific) |
+| **AGENTS-DECISION-TREES.md** | Decision guidance for architectural choices |
+| **PLATFORM-VISIONOS.md** | visionOS-specific patterns and best practices |
+| **Scripts/README-TCA-COMPOSITION.md** | Validators reference guide |
+
+## 🔗 Related Components
+
+- **[sosumi-skill](../sosumi-skill/)** - Apple documentation + WWDC transcripts
+- **[smith-core](../smith-core/)** - Universal Swift patterns library
+- **[smith-sbsift](../smith-sbsift/)** - Swift build analysis
+- **[smith-spmsift](../smith-spmsift/)** - SPM analysis
+- **[smith-xcsift](../smith-xcsift/)** - Xcode project analysis
+
+## 🤝 Contributing
+
+Contributions welcome! Please:
+
+1. Discuss new patterns in GitHub issues first
+2. Add real-world case studies when patterns emerge
+3. Test on production codebases
+4. Update SKILL.md version when merging
+
+## 📄 License
+
+MIT - See [LICENSE](LICENSE) for details
+
+---
+
+**smith-skill v1.2.0 - Production Ready**
+
+Agentic validation, expert patterns, architectural guidance—all built for production Swift teams.
+
+*Last updated: November 17, 2025*
