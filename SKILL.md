@@ -1,6 +1,6 @@
 ---
 name: smith
-description: Smith Framework patterns and modern iOS development discipline. Swift Composable Architecture patterns with syntax-first validation, reading budgets, and Point-Free validated TCA patterns. Prevents over-engineering by ensuring 2-minute fixes stay 2-minute fixes, not 90-minute documentation marathons.
+description: Swift architecture validation for TCA (The Composable Architecture). Detects monolithic reducers, validates composition rules, analyzes testability, recommends feature extractions. Use for "Is my reducer too big?", "TCA patterns", "architecture violations", "feature extraction", "reducer composition", "TCA best practices", "@Reducer", "@ObservableState", "@Shared", Swift Testing, concurrency patterns, dependency injection.
 allowed-tools: [Read, Bash, Write, Edit, Grep, Glob]
 ---
 
