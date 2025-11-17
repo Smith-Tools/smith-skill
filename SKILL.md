@@ -101,20 +101,28 @@ Both needed?          → Use both skills
 ```
 
 ### Examples
-**Need both Smith and Sosumi:**
+**Need both Smith and Sosumi (automatically triggered):**
 - "How do I implement GroupActivities with TCA?"
   → Smith: TCA state management patterns
-  → Sosumi: `/skill sosumi shareplay` (API details)
+  → Sosumi: *Auto-triggered* for GroupActivities API + WWDC sessions
 
 - "My Combine publishers aren't working with TCA"
   → Smith: Dependency injection + testing patterns
-  → Sosumi: `/skill sosumi search "Combine Publisher"`
+  → Sosumi: *Auto-triggered* for Combine Publisher API documentation
 
 - "SwiftUI navigation with async/await"
   → Smith: Concurrency patterns in TCA
-  → Sosumi: `/skill sosumi fetch swiftui/navigation`
+  → Sosumi: *Auto-triggered* for SwiftUI navigation APIs
+
+- "Author timelines in Reality Composer Pro, control in code without behaviors"
+  → Smith: Architecture patterns for animation state management
+  → Sosumi: *Auto-triggered* for AnimationPlaybackController, AnimationResource, WWDC sessions on RCP
 
 ### Accessing Sosumi
+
+**Automatic (recommended):** Sosumi triggers automatically when you mention API terms, frameworks, or ask for documentation.
+
+**Manual (explicit):** Use if automatic detection doesn't trigger:
 ```bash
 # API reference
 /skill sosumi search "URLSession configuration"
@@ -127,9 +135,13 @@ Both needed?          → Use both skills
 
 # SharePlay/GroupActivities (specialized)
 /skill sosumi shareplay
+
+# RealityKit timeline animation
+/skill sosumi search "AnimationPlaybackController"
+/skill sosumi wwdc "Reality Composer Pro timeline"
 ```
 
-**Sosumi provides:** sosumi.ai (on-demand Apple documentation, HIG, real-time API access) + WWDC transcripts (2018-2025, searchable, cached). **15-20% token savings vs WebSearch.**
+**Sosumi provides:** sosumi.ai (on-demand Apple documentation, HIG, real-time API access) + WWDC transcripts (2018-2025, searchable, cached). **70% token savings combined vs WebSearch.**
 
 ## What This Skill Does
 
