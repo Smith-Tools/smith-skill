@@ -67,6 +67,14 @@ A modern Swift development discipline that prevents over-engineering and ensures
 - ✅ User mentions **package dependencies**, "Swift build monitoring", "SPM analysis"
 - ✅ User needs **Swift Package Manager** build optimization or progress tracking
 
+**Use TCA Composition Validators when:**
+- ✅ User asks about **TCA composition**, "monolithic features", "reducer extraction"
+- ✅ User mentions **closure dependency injection**, "untestable patterns"
+- ✅ User needs **testability improvements**, "testing blockers", "TCA anti-patterns"
+- ✅ User wants **architecture guidance**, "feature extraction", "reducer refactoring"
+- ✅ User reports **maintenance issues** or **testing difficulties** in TCA code
+- ✅ User needs **metrics** on code composition (testability score, complexity)
+
 **Examples:**
 - "How do I add dependency injection to my Swift code?" → smith-core
 - "My TCA reducer won't compile, what's wrong?" → smith-tca
@@ -364,14 +372,60 @@ Scripts/spm-validate.sh [package-path] [--verbose]
 - **Verbose mode:** `--verbose` flag shows detailed import chains
 - **Critical for:** Debugging Xcode indexing hangs, 1.8GB+ index stores, "Processing files" stuck states
 
-### TCA Pattern Validation
+### TCA Composition Validators (Bash-Based Scripts)
+
+**Automatic Anti-Pattern Detection:**
 ```bash
-Scripts/tca-pattern-validator.js [file-or-directory]
+Scripts/validate-tca-composition.sh [path] [--json] [--strict]
 ```
-- Deep TCA pattern analysis
+- **Detects Rules 1.1-1.5 anti-patterns** from AGENTS-TCA-PATTERNS.md
+- Rule 1.1: Monolithic features (State > 15 props, Actions > 40 cases)
+- Rule 1.2: Closure dependency injection (var x: (...) -> Effect)
+- Rule 1.3: Code duplication (duplicate action handlers)
+- Rule 1.4: Unclear organization (5+ vague helper methods)
+- Rule 1.5: Tightly coupled state (5+ child features)
+- **Output modes:** Human-readable or JSON (for CI/CD)
+- **Strict mode:** `--strict` flag fails build on HIGH violations
+- **Reference:** README-TCA-COMPOSITION.md for complete documentation
+
+**Dependency Graph Analysis:**
+```bash
+Scripts/analyze-tca-dependency-graph.sh [path] [--detailed] [--json]
+```
+- Maps state property dependencies and coupling complexity
+- Calculates reducer complexity scores (< 8: healthy, 8-15: monitor, > 15: refactor)
+- Identifies tightly coupled patterns
+- Suggests decomposition opportunities
+
+**Testability Scoring:**
+```bash
+Scripts/check-tca-testability.sh [path] [--json] [--threshold SCORE]
+```
+- Scores testability 0-100 (default threshold: 75+)
+- Identifies testing blockers (closure injection -10 pts each, @Dependency +2 pts)
+- Counts proper @Dependency usage (positive indicator)
+- Provides improvement guidance with effort estimates
+- **Usage:** Use --threshold flag to set custom passing score
+
+**Feature Extraction Recommendations:**
+```bash
+Scripts/recommend-tca-extractions.sh [path] [--json] [--effort-only]
+```
+- Suggests specific features to extract based on composition analysis
+- Prioritizes by value: P1 (unblock testing), P2 (maintainability), P3 (clarity)
+- Estimates effort for each recommendation (2h → 12h)
+- Provides sprint planning guidance
+- **Output:** Actionable items with effort and impact
+
+### TCA Pattern Validation (Swift-Based via smith-cli)
+```bash
+smith-cli validate --patterns [file-or-directory]
+```
+- Deep TCA pattern analysis (Swift-based, native toolchain)
 - Detects modern @Reducer vs deprecated patterns
 - Validates @Shared usage and concurrency patterns
 - Provides specific fix recommendations with references
+- **Note:** For basic pattern detection without smith-cli, use `smith-format-check.sh` or composition validators
 
 ### Deep Compilation Validation
 ```bash
@@ -516,7 +570,7 @@ Evaluate whether code validation is applicable:
 **Traditional Swift Analysis (if no Package.swift):**
 1. `validate-syntax.sh` (quick syntax check)
 2. `validate-compilation-deep.sh` (full compilation, catches hangs)
-3. `tca-pattern-validator.js` (pattern analysis)
+3. `smith-cli validate --patterns` (TCA/Swift pattern analysis - via smith-cli)
 
 **Critical Rules:**
 - ALWAYS start with most efficient tool (spm-quick.sh)
@@ -580,7 +634,7 @@ Script output: "3 syntax errors in LoginFeature.swift"
     ↓
 Agent: Fixes syntax based on script output
     ↓
-Run tca-pattern-validator.js
+smith-cli validate --patterns
     ↓
 Script: "Detected WithViewStore usage (deprecated)"
     ↓
@@ -670,10 +724,10 @@ smith/
 │   ├── SMITH-PLATFORMS.md    (Platform patterns)
 │   ├── AGENTS-*.md           (Legacy docs - kept for reference)
 │   └── CLAUDE.md             (Direct agent instructions)
-├── Scripts/                  (Analysis tools)
+├── Scripts/                  (Analysis tools - Shell-based)
 │   ├── spm-*.sh              (SPM analysis tools)
-│   ├── validate-*.sh         (Compilation tools)
-│   └── tca-pattern-validator.js (TCA validation)
+│   ├── validate-*.sh         (Compilation validation tools)
+│   └── smith-*.sh            (Build monitoring and analysis)
 └── README.md                 (Dependencies and installation)
 ```
 
