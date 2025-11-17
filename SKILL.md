@@ -777,6 +777,7 @@ Ask Claude directly about any Smith pattern, TCA implementation, or iOS architec
 
 ---
 
-**Framework Version:** 1.1.1
-**Last Updated:** November 14, 2025
+**Framework Version:** 1.2.0
+**Last Updated:** November 17, 2025
 **Validated Against:** Point-Free Swift Composable Architecture examples
+**New in 1.2.0:** TCA Composition Validators (Rules 1.1-1.5 enforcement)
