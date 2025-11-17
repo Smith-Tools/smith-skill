@@ -83,6 +83,54 @@ A modern Swift development discipline that prevents over-engineering and ensures
 - "My build is stuck, what should I do?" → **Detect project type, route to appropriate tool with --eta --resources --hang-detection**
 - "Use Smith for my entire TCA app with visionOS" → smith-core + smith-tca + smith-platforms
 
+## Complementary Tool: Sosumi Skill
+
+**Smith handles architecture patterns, Sosumi handles Apple documentation.**
+
+### When to Use Sosumi
+✅ **API reference** - Swift signatures, framework methods, properties (sosumi.ai on-demand)
+✅ **Documentation lookup** - SwiftUI View, URLSession, Combine APIs (real-time, cached)
+✅ **WWDC content** - Session transcripts 2018-2025, Apple's guidance on patterns (searchable)
+✅ **Learning context** - How Apple recommends using specific APIs with WWDC context
+
+### Quick Routing Decision
+```
+Architecture question  → Use Smith skill
+API question          → Use Sosumi skill
+Both needed?          → Use both skills
+```
+
+### Examples
+**Need both Smith and Sosumi:**
+- "How do I implement GroupActivities with TCA?"
+  → Smith: TCA state management patterns
+  → Sosumi: `/skill sosumi shareplay` (API details)
+
+- "My Combine publishers aren't working with TCA"
+  → Smith: Dependency injection + testing patterns
+  → Sosumi: `/skill sosumi search "Combine Publisher"`
+
+- "SwiftUI navigation with async/await"
+  → Smith: Concurrency patterns in TCA
+  → Sosumi: `/skill sosumi fetch swiftui/navigation`
+
+### Accessing Sosumi
+```bash
+# API reference
+/skill sosumi search "URLSession configuration"
+
+# WWDC transcripts
+/skill sosumi wwdc "SwiftUI concurrency"
+
+# Specific framework docs
+/skill sosumi fetch combine/publisher
+
+# SharePlay/GroupActivities (specialized)
+/skill sosumi shareplay
+```
+
+**Sosumi provides:** sosumi.ai (on-demand Apple documentation, HIG, real-time API access) + WWDC transcripts (2018-2025, searchable, cached). **15-20% token savings vs WebSearch.**
+
 ## What This Skill Does
 
 ✅ **Syntax-first validation** - Always check compilation before patterns
@@ -91,6 +139,7 @@ A modern Swift development discipline that prevents over-engineering and ensures
 ✅ **Anti-pattern detection** - Stops common mistakes before implementation
 ✅ **Smart documentation routing** - 30-second task classification → targeted docs
 ✅ **Complete framework** - State management, concurrency, testing, architecture
+✅ **Integrated workflow** - Smith + Sosumi for complete development solutions
 
 ## Core Problem Solved
 
