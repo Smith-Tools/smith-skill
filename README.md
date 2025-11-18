@@ -8,7 +8,7 @@ Production-ready Claude Skill providing automated architectural validation, patt
 
 smith-skill is the core component of Smith Tools, providing:
 
-- **TCA Composition Validators** - Detect architectural violations (Rules 1.1-1.5)
+- **TCA Composition Validators** - Detect architectural opportunities (Rules 1.1-1.5)
 - **Pattern Library** - 40+ validated TCA, concurrency, and testing patterns
 - **Decision Trees** - Architectural guidance for common scenarios
 - **Build Analysis** - Context-efficient compilation debugging
@@ -47,7 +47,7 @@ ls ~/.claude/skills/smith/SKILL.md
 Located in `Scripts/`:
 
 1. **validate-tca-composition.sh** (9.6 KB)
-   - Detects Rules 1.1-1.5 violations
+   - Detects Rules 1.1-1.5 opportunities
    - Human-readable or JSON output
    - Strict mode for CI/CD gating
 

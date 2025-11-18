@@ -35,18 +35,18 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Initialize counters and arrays
-VIOLATIONS_FOUND=0
+OPPORTUNITIES_FOUND=0
 HIGH_ALERTS=0
 MEDIUM_ALERTS=0
 LOW_ALERTS=0
 
 # JSON output arrays
-declare -a HIGH_VIOLATIONS
-declare -a MEDIUM_VIOLATIONS
-declare -a LOW_VIOLATIONS
+declare -a HIGH_OPPORTUNITIES
+declare -a MEDIUM_OPPORTUNITIES
+declare -a LOW_OPPORTUNITIES
 
-# Helper function to add violation
-add_violation() {
+# Helper function to add opportunity
+add_opportunity() {
     local level=$1
     local file=$2
     local rule=$3
@@ -56,18 +56,18 @@ add_violation() {
     if [ "$JSON_OUTPUT" = true ]; then
         case $level in
             HIGH)
-                HIGH_VIOLATIONS+=("{\"file\":\"$file\",\"rule\":\"$rule\",\"line\":\"$line\",\"message\":\"$message\"}")
+                HIGH_OPPORTUNITIES+=("{\"file\":\"$file\",\"rule\":\"$rule\",\"line\":\"$line\",\"message\":\"$message\"}")
                 ;;
             MEDIUM)
-                MEDIUM_VIOLATIONS+=("{\"file\":\"$file\",\"rule\":\"$rule\",\"line\":\"$line\",\"message\":\"$message\"}")
+                MEDIUM_OPPORTUNITIES+=("{\"file\":\"$file\",\"rule\":\"$rule\",\"line\":\"$line\",\"message\":\"$message\"}")
                 ;;
             LOW)
-                LOW_VIOLATIONS+=("{\"file\":\"$file\",\"rule\":\"$rule\",\"line\":\"$line\",\"message\":\"$message\"}")
+                LOW_OPPORTUNITIES+=("{\"file\":\"$file\",\"rule\":\"$rule\",\"line\":\"$line\",\"message\":\"$message\"}")
                 ;;
         esac
     fi
 
-    VIOLATIONS_FOUND=$((VIOLATIONS_FOUND + 1))
+    OPPORTUNITIES_FOUND=$((OPPORTUNITIES_FOUND + 1))
     case $level in
         HIGH) HIGH_ALERTS=$((HIGH_ALERTS + 1)) ;;
         MEDIUM) MEDIUM_ALERTS=$((MEDIUM_ALERTS + 1)) ;;
@@ -111,7 +111,7 @@ while IFS= read -r reducer_file; do
     ACTION_CASE_COUNT=$(grep -c "^\s*case " "$reducer_file" | head -1 || echo 0)
 
     if [ "$STATE_PROPERTY_COUNT" -gt 15 ]; then
-        add_violation "HIGH" "$reducer_file" "1.1" "State has $STATE_PROPERTY_COUNT properties (threshold: 15) - consider extracting features"
+        add_opportunity "HIGH" "$reducer_file" "1.1" "State has $STATE_PROPERTY_COUNT properties (threshold: 15) - consider extracting features"
         if [ "$JSON_OUTPUT" = false ]; then
             echo "🔴 HIGH: $filename"
             echo "   Rule 1.1: Monolithic Feature"
@@ -120,7 +120,7 @@ while IFS= read -r reducer_file; do
     fi
 
     if [ "$ACTION_CASE_COUNT" -gt 40 ]; then
-        add_violation "HIGH" "$reducer_file" "1.1" "Action enum has $ACTION_CASE_COUNT cases (threshold: 40) - indicates multiple features"
+        add_opportunity "HIGH" "$reducer_file" "1.1" "Action enum has $ACTION_CASE_COUNT cases (threshold: 40) - indicates multiple features"
         if [ "$JSON_OUTPUT" = false ]; then
             echo "🔴 HIGH: $filename"
             echo "   Rule 1.1: Monolithic Feature"
@@ -132,7 +132,7 @@ while IFS= read -r reducer_file; do
     CLOSURE_INJECTIONS=$(grep -E "var\s+\w+:\s*\([^)]*\)\s*->\s*(Effect|some\s+Effect)" "$reducer_file" | wc -l)
 
     if [ "$CLOSURE_INJECTIONS" -gt 0 ]; then
-        add_violation "HIGH" "$reducer_file" "1.2" "Found $CLOSURE_INJECTIONS closure injection pattern(s) - use @Dependency instead"
+        add_opportunity "HIGH" "$reducer_file" "1.2" "Found $CLOSURE_INJECTIONS closure injection pattern(s) - use @Dependency instead"
         if [ "$JSON_OUTPUT" = false ]; then
             echo "🔴 CRITICAL: $filename"
             echo "   Rule 1.2: Closure Dependency Injection"
@@ -145,7 +145,7 @@ while IFS= read -r reducer_file; do
     DUPLICATE_CASES=$(grep -o "case \.[a-zA-Z_][a-zA-Z0-9_]*" "$reducer_file" | sort | uniq -d | wc -l)
 
     if [ "$DUPLICATE_CASES" -gt 0 ]; then
-        add_violation "MEDIUM" "$reducer_file" "1.3" "Found $DUPLICATE_CASES duplicate action case(s) - consolidate into single handler"
+        add_opportunity "MEDIUM" "$reducer_file" "1.3" "Found $DUPLICATE_CASES duplicate action case(s) - consolidate into single handler"
         if [ "$JSON_OUTPUT" = false ]; then
             echo "🟠 MEDIUM: $filename"
             echo "   Rule 1.3: Code Duplication"
@@ -159,7 +159,7 @@ while IFS= read -r reducer_file; do
     VAGUE_METHODS=$(grep -E "^\s*private\s+func\s+(.*Features|.*Reducers|utility|helper|misc)" "$reducer_file" | wc -l)
 
     if [ "$VAGUE_METHODS" -gt 3 ]; then
-        add_violation "LOW" "$reducer_file" "1.4" "Found $VAGUE_METHODS vague reducer methods - clarify boundaries"
+        add_opportunity "LOW" "$reducer_file" "1.4" "Found $VAGUE_METHODS vague reducer methods - clarify boundaries"
         if [ "$JSON_OUTPUT" = false ]; then
             echo "🟡 LOW: $filename"
             echo "   Rule 1.4: Unclear Organization"
@@ -172,7 +172,7 @@ while IFS= read -r reducer_file; do
     CHILD_STATES=$(grep -E "@Presents\s+var|var\s+\w+:\s*\w+Feature\.State\?" "$reducer_file" | wc -l)
 
     if [ "$CHILD_STATES" -gt 5 ]; then
-        add_violation "MEDIUM" "$reducer_file" "1.5" "Found $CHILD_STATES child features - may have cascading update complexity"
+        add_opportunity "MEDIUM" "$reducer_file" "1.5" "Found $CHILD_STATES child features - may have cascading update complexity"
         if [ "$JSON_OUTPUT" = false ]; then
             echo "🟠 MEDIUM: $filename"
             echo "   Rule 1.5: Tight Coupling"
@@ -181,7 +181,7 @@ while IFS= read -r reducer_file; do
     fi
 
     # Print detailed analysis if not JSON and violations found
-    if [ "$JSON_OUTPUT" = false ] && [ "$VIOLATIONS_FOUND" -gt 0 ]; then
+    if [ "$JSON_OUTPUT" = false ] && [ "$OPPORTUNITIES_FOUND" -gt 0 ]; then
         echo ""
     fi
 
@@ -192,35 +192,35 @@ if [ "$JSON_OUTPUT" = true ]; then
     # JSON output format
     printf "{"
     printf "\"success\":true,"
-    printf "\"violations\":%d," "$VIOLATIONS_FOUND"
+    printf "\"opportunities\":%d," "$OPPORTUNITIES_FOUND"
     printf "\"high\":%d," "$HIGH_ALERTS"
     printf "\"medium\":%d," "$MEDIUM_ALERTS"
     printf "\"low\":%d," "$LOW_ALERTS"
     printf "\"files_analyzed\":%d," "$FILE_COUNT"
 
-    # Add violations arrays
-    printf "\"high_violations\":["
-    for i in "${!HIGH_VIOLATIONS[@]}"; do
-        printf "%s" "${HIGH_VIOLATIONS[$i]}"
-        if [ $i -lt $((${#HIGH_VIOLATIONS[@]} - 1)) ]; then
+    # Add opportunities arrays
+    printf "\"high_opportunities\":["
+    for i in "${!HIGH_OPPORTUNITIES[@]}"; do
+        printf "%s" "${HIGH_OPPORTUNITIES[$i]}"
+        if [ $i -lt $((${#HIGH_OPPORTUNITIES[@]} - 1)) ]; then
             printf ","
         fi
     done
     printf "],"
 
-    printf "\"medium_violations\":["
-    for i in "${!MEDIUM_VIOLATIONS[@]}"; do
-        printf "%s" "${MEDIUM_VIOLATIONS[$i]}"
-        if [ $i -lt $((${#MEDIUM_VIOLATIONS[@]} - 1)) ]; then
+    printf "\"medium_opportunities\":["
+    for i in "${!MEDIUM_OPPORTUNITIES[@]}"; do
+        printf "%s" "${MEDIUM_OPPORTUNITIES[$i]}"
+        if [ $i -lt $((${#MEDIUM_OPPORTUNITIES[@]} - 1)) ]; then
             printf ","
         fi
     done
     printf "],"
 
-    printf "\"low_violations\":["
-    for i in "${!LOW_VIOLATIONS[@]}"; do
-        printf "%s" "${LOW_VIOLATIONS[$i]}"
-        if [ $i -lt $((${#LOW_VIOLATIONS[@]} - 1)) ]; then
+    printf "\"low_opportunities\":["
+    for i in "${!LOW_OPPORTUNITIES[@]}"; do
+        printf "%s" "${LOW_OPPORTUNITIES[$i]}"
+        if [ $i -lt $((${#LOW_OPPORTUNITIES[@]} - 1)) ]; then
             printf ","
         fi
     done
@@ -235,32 +235,32 @@ else
     echo "════════════════════════════════════════════════════════════"
     echo ""
     echo "Files analyzed: $FILE_COUNT"
-    echo "Total violations: $VIOLATIONS_FOUND"
+    echo "Total opportunities: $OPPORTUNITIES_FOUND"
     echo ""
     echo "🔴 HIGH (blocking): $HIGH_ALERTS"
     echo "🟠 MEDIUM (important): $MEDIUM_ALERTS"
     echo "🟡 LOW (guidance): $LOW_ALERTS"
     echo ""
 
-    if [ "$VIOLATIONS_FOUND" -eq 0 ]; then
-        echo "✅ No composition violations found!"
+    if [ "$OPPORTUNITIES_FOUND" -eq 0 ]; then
+        echo "✅ No composition opportunities found!"
         echo ""
         echo "📚 Reference: See AGENTS-TCA-PATTERNS.md for composition guidelines"
     else
-        echo "❌ Composition violations detected"
+        echo "🔍 Composition opportunities detected"
         echo ""
 
         if [ "$STRICT_MODE" = true ] && [ "$HIGH_ALERTS" -gt 0 ]; then
-            echo "🔴 STRICT MODE: HIGH violations found - failing build"
+            echo "🔴 STRICT MODE: HIGH opportunities found - failing build"
             echo ""
-            echo "💡 To fix HIGH violations:"
+            echo "💡 To address HIGH opportunities:"
             echo "   • Rule 1.1: Extract features when State > 15 props or Actions > 40"
             echo "   • Rule 1.2: Replace closure injection with @Dependency declarations"
             echo ""
             exit 1
         fi
 
-        echo "💡 To fix violations:"
+        echo "💡 To fix opportunities:"
         echo "   HIGH (1.1-1.2): These block testing and maintainability - fix immediately"
         echo "   MEDIUM (1.3, 1.5): Important for clarity and reducing bugs"
         echo "   LOW (1.4): Improve clarity for team understanding"
